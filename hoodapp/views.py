@@ -16,9 +16,7 @@ def signin(request):
 
         user=authenticate(request,username=username,password=password)
         if user is not None:
-            login(request,user)
-            messages.success(request,"You have successfuly loged in")
-            return redirect ("/home")
+            return redirect ("home")
     return render(request,'registration/login.html')
 
 def register(request):
