@@ -3,9 +3,10 @@ from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
 
+@login_required(login_url='/login/')
 def home(request):
     return render(request, 'home.html')
 
@@ -16,7 +17,9 @@ def signin(request):
 
         user=authenticate(request,username=username,password=password)
         if user is not None:
-            return redirect ("home")
+            login(request,user)
+            messages.success(request,"You have successfuly loged in")
+            return redirect ('/')
     return render(request,'registration/login.html')
 
 def register(request):
