@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xh&@v2(0_@-&8!+58*!m0&0obwef9t3tqh%+sw7y7-d!9*2(+7'
+
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,7 +46,14 @@ INSTALLED_APPS = [
     'hoodapp',
     'crispy_forms',
     'bootstrap4',
+    'cloudinary',
 ]
+
+cloudinary.config( 
+  cloud_name = "dnrny9lzh", 
+  api_key = "899794324973136", 
+  api_secret = "a5aNCEo4affViIODCc7sAsuNHm4" 
+)
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -81,9 +93,14 @@ WSGI_APPLICATION = 'hood.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': '',
     }
+    
 }
 
 
