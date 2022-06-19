@@ -4,10 +4,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
 from .models import *
-
-from .forms import PostForm, ProfileUpdateForm
+from .forms import BusinessForm, PostForm, ProfileUpdateForm
 
 
 @login_required(login_url='/login/')
@@ -40,7 +38,7 @@ def home(request):
       'hood': hood
    }
 
-    return render(request, 'index.html')
+    return render(request, 'index.html', context)
 
 def signin(request):
     if request.method=="POST":
@@ -98,4 +96,41 @@ def edit_profile(request):
       'form': form
    }
 
-   return render(request,'dash/edit_profile.html',context)
+   return render(request,'watch/edit_profile.html',context)
+
+
+@login_required(login_url='register')
+def hood_change(request):
+
+   title = f'Change Neighbourhood'
+
+   context = {
+      'title': title
+   }
+
+   return render(request,'dash/hood_change.html',context)
+
+
+@login_required(login_url='register')
+def new_business(request):
+
+   title = f'Add a New Business in {request.user.profile.neighbourhood}'
+
+   if request.method == 'POST':
+      form = BusinessForm(request.POST)
+      if form.is_valid():
+         business = form.save(commit=False)
+         business.owner = request.user.profile
+         business.hood = request.user.profile.neighbourhood
+         business.save()
+         return redirect('feed')
+   else:
+      form = BusinessForm()
+
+   context =  {
+      'form': form,
+      'title': title
+   }
+
+   return render(request,'watch/new_business.html',context)
+
