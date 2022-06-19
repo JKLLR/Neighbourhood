@@ -56,8 +56,6 @@ class Category(models.Model):
    def __str__(self):
       return self.name
 
-   class Meta:
-      verbose_name_plural = "Categories"
 
 
 class Business(models.Model):
@@ -72,5 +70,14 @@ class Business(models.Model):
    def __str__(self):
       return self.name
 
-   class Meta:
-      verbose_name_plural = "Businesses"
+
+class Post(models.Model):
+   
+   content = models.CharField(max_length=280)
+   author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+   hood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
+   category = models.CharField(max_length=50,default='General')
+
+   def __str__(self):
+      return self.content
+   
