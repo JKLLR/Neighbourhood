@@ -1,5 +1,100 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load cripsy_form_tags %}
 
 {% block content %}
 
-{% endblock%}
+<div class="content">
+
+    <div class="updates">
+
+
+
+        <div class="add">
+            <h3>{{ user.profile.neighbourhood }}</h3>
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit">Add Post</button>
+            </form>
+        </div>
+
+        <div class="hood-posts">
+
+            <h3>Updates</h3>
+            <div class="posts">
+                {% if posts %}
+
+
+                {% for post in posts %}
+
+                <div class="post-card">
+                    <p class="{{ txt_color }}">{{ post.category }}</p>
+                    <p class="post-content">{{ post.content }}</p>
+                    <div class="author">
+                        <div class="avatar-sm">
+                            <img src="{{ post.author.avatar.url }}" alt="">
+                        </div>
+                        <p>{{ post.author.user.first_name }} {{ post.author.user.last_name }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% else %}
+                <h3 class='but'>There are no updates in this neighbourhood.</h3>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="sidebar">
+
+        <div class="hood">
+            <div class="profile-card">
+                <div class="hood-image">
+                    <img src="{% static 'images/rainbow.jpg' %}" alt="">
+                </div>
+                <div class="bg-front"></div>
+                <div class="bg-back"></div>
+            </div>
+
+            <h3>{{ hood.name }}</h3>
+            <h5>{{ hood.location }}</h5>
+            <h5 class="title">Amenities</h5>
+            <div class="business">
+                {% for amenity in amenities %}
+                <h5>{{ amenity.name }}</h5>
+                <p>{{ amenity.category }}</p>
+                <div class="contacts">
+                    <p>{{ amenity.tel }}</p>
+                    <p>{{ amenity.email }}</p>
+                </div>
+                {% endfor %}
+                <a href="{% url 'new_amenity' %}">Add a Public Amenity</a>
+            </div>
+
+
+            <h5 class="title">Businesses</h5>
+            {% for business in businesses %}
+            <div class="business">
+                <h5>{{ business.name }}</h5>
+                <p>{{ business.category }}</p>
+                <div class="contacts">
+                    <p>{{ business.tel }}</p>
+                    <p>{{ business.email }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            <a href="{% url 'new_business' %}">Add a Business</a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}
