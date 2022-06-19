@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import *
-from .forms import BusinessForm, PostForm, ProfileUpdateForm
+from .forms import AmenitiesForm, BusinessForm, NeighbourhoodForm, PostForm, ProfileUpdateForm
 
 
 @login_required(login_url='/login/')
@@ -134,3 +134,65 @@ def new_business(request):
 
    return render(request,'watch/new_business.html',context)
 
+def search(request):
+    
+   if 'biz_search' in request.GET and request.GET['biz_search']:
+      searched = request.GET.get('biz_search')
+      if searched:
+         businesses = Business.objects.filter(name__icontains=searched,hood=request.user.profile.neighbourhood)
+         title = f'You searched for {searched}'
+
+   context = {
+      'businesses': businesses,
+      'title': title,
+      'searched': searched
+   }
+
+   return render(request,'watch/search.html',context)
+
+@login_required(login_url='/login/')
+def new_hood(request):
+
+   title = "Add new neighbourhood"
+
+   if request.method == 'POST':
+      form = NeighbourhoodForm(request.POST)
+      if form.is_valid():
+         hood = form.save(commit=False)
+         hood.admin = request.user
+         hood.save()
+         profile = request.user.profile
+         profile.neighbourhood = hood
+         profile.save()
+         return redirect('feed')
+   else:
+      form = NeighbourhoodForm()
+
+   context = {
+      'title': title,
+      'form': form
+   }
+
+   return render(request,'watch/new_hood.html',context)
+
+@login_required(login_url='/login/')
+def new_amenity(request):
+
+   title = f'Add a New Amenity in {request.user.profile.neighbourhood}'
+
+   if request.method == 'POST':
+      form = AmenitiesForm(request.POST)
+      if form.is_valid():
+         amenity = form.save(commit=False)
+         amenity.hood = request.user.profile.neighbourhood
+         amenity.save()
+         return redirect('feed')
+   else:
+      form = AmenitiesForm()
+
+   context =  {
+      'form': form,
+      'title': title
+   }
+
+   return render(request,'watch/new_amenity.html',context)
