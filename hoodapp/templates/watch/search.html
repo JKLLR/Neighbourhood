@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+
+<div class="content">
+
+
+   <div class="updates">
+
+      {% if businesses %}
+
+      <div class="current-hood">
+         <div class="icon-md">
+            <img src="{% static 'svg/map-pin-stroke-white.svg' %}" alt="">
+         </div>
+         <h1 class='results'>Your search for <span>{{ searched }}</span> returned.</h1>
+         <h3>{{user.profile.neighbourhood.name }}</h3>
+      </div>
+
+      <div class="hood-posts">
+
+         <div class="businesses">
+
+            {% for business in businesses %}
+            <div class="business">
+               <h5>{{ business.name }}</h5>
+               <p>{{ business.category }}</p>
+               <div class="contacts">
+                  <p>{{ business.tel }}</p>
+                  <p>{{ business.email }}</p>
+               </div>
+            </div>
+            {% endfor %}
+            <a href="{% url 'new_business' %}">Add a Business</a>
+         </div>
+
+      </div>
+
+
+      {% else %}
+      <div class="current-hood">
+         <div class="icon-md">
+            <img src="{% static 'svg/map-pin-stroke-white.svg' %}" alt="">
+         </div>
+         <h1 class='results'>Your search for <span>{{ searched }}</span> didn't return anything. </h1>
+      </div>
+      {% endif %}
+
+   </div>
+
+</div>
+
+
+{% endblock content %}
