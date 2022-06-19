@@ -5,9 +5,41 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
+from .models import *
+
+from .forms import PostForm
+
 
 @login_required(login_url='/login/')
 def home(request):
+    hood = request.user.profile.neighbourhood
+
+    title = f'Feed | {hood}'
+
+    posts = Post.objects.filter(hood=hood)
+    businesses = Business.objects.filter(hood=hood)
+    amenities = Amenities.objects.filter(hood=hood)
+
+    if request.method == 'POST':
+      form = PostForm(request.POST)
+      if form.is_valid():
+         post = form.save(commit=False)
+         post.author = request.user.profile
+         post.hood = request.user.profile.neighbourhood
+         post.save()
+         return redirect('feed')
+    else:
+      form = PostForm()
+
+    context = {
+      'title': title,
+      'posts': posts,
+      'businesses': businesses,
+      'amenities': amenities,
+      'form': form,
+      'hood': hood
+   }
+
     return render(request, 'index.html')
 
 def signin(request):
