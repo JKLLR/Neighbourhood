@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import *
 
-from .forms import PostForm
+from .forms import PostForm, ProfileUpdateForm
 
 
 @login_required(login_url='/login/')
@@ -27,7 +27,7 @@ def home(request):
          post.author = request.user.profile
          post.hood = request.user.profile.neighbourhood
          post.save()
-         return redirect('feed')
+         return redirect('/')
     else:
       form = PostForm()
 
@@ -51,7 +51,7 @@ def signin(request):
         if user is not None:
             login(request,user)
             messages.success(request,"You have successfuly loged in")
-            return redirect ('/')
+            return redirect ('edit_profile')
     return render(request,'registration/login.html')
 
 def register(request):
@@ -76,3 +76,26 @@ def register(request):
         new_user.save() 
         return render (request,'registration/login.html')
     return render(request,'registration/register.html')
+
+
+@login_required(login_url='register')
+def edit_profile(request):
+
+   title = 'Edit Profile'
+
+   user = request.user
+
+   if request.method == 'POST':
+      form = ProfileUpdateForm(request.POST,request.FILES,instance=user.profile)
+      if form.is_valid():
+         form.save()
+         return redirect('/')
+   else:
+      form = ProfileUpdateForm(instance=user.profile)
+
+   context = {
+      'title': title,
+      'form': form
+   }
+
+   return render(request,'dash/edit_profile.html',context)
