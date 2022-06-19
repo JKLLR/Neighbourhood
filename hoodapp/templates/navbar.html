@@ -1,34 +1,48 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar scroll</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarScroll">
-      <ul class="navbar-nav mr-auto my-2 my-lg-0 navbar-nav-scroll" style="max-height: 100px;">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+<div class="navbar-fixed">
+  <nav >
+    <div class="nav-wrapper" style="padding-bottom: 0;">
+      <a href="{% url 'index' %}" class="brand-logo left white-text">nyumbakumi</a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li>
+          <!--search for projects-->
+          <form id="search-site" action="{% url 'search_results' %}" method='get'>
+            <div class="input-field">
+              <input placeholder="Find a business..."  id="search" type="text" class="validate" name="business">
+            </div>
+          </form>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-            Link
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled">Link</a>
-        </li>
+        <!--navbar icons-->
+        <li><a href="/"><i class="material-icons white-text">home</i></a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'new_neighbourhood' %}"><i class="material-icons white-text">add</i></a></li>
+          {% if user.profile.neighbourhood %}
+          <li> <a href="{% url 'neighbourhood_details' request.user.profile.neighbourhood.pk %}" class="white-text"><i class="material-icons white-text">business</i>View hood</a></li>
+          {% endif %}
+          <li><a href="{% url 'profile' %}"><i class="material-icons white-text">account_circle</i></a></li>
+          <li><a href="{% url 'logout' %}"><i class="material-icons white-text">exit_to_app</i></a></li>
+          
+        {% else %}
+          <li><a href="{% url 'login' %}" class="white-text">login</a></li>
+          <li><a href="{% url 'register' %}" class="white-text">register</a></li>
+        {% endif %}
       </ul>
-      <form class="d-flex">
-        <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
     </div>
   </nav>
+  
+</div>
+<ul class="sidenav" id="mobile-demo">
+  <li><a href="/"><i class="material-icons white-text">home</i></a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'new_neighbourhood' %}" class="white-text"><i class="material-icons white-text">add</i>create neighbourhood</a></li>
+        {% if user.profile.neighbourhood %}
+        <li> <a href="{% url 'neighbourhood_details' request.user.profile.neighbourhood.pk %}" class="white-text"><i class="material-icons white-text">business</i>View hood</a></li>
+        {% endif %}
+        <li><a href="{% url 'profile' %}" class="white-text"><i class="material-icons white-text">account_circle</i>view profile</a></li>
+        <li><a href="{% url 'logout' %}" class="white-text"><i class="material-icons white-text">exit_to_app</i>log out</a></li>
+        
+      {% else %}
+        <li><a href="{% url 'login' %}" class="white-text">login</a></li>
+        <li><a href="{% url 'register' %}" class="white-text">register</a></li>
+      {% endif %}
+</ul>

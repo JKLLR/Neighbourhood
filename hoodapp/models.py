@@ -3,101 +3,83 @@ from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
 
 # Create your models here.
-class Location(models.Model):
-   
-   name = models.CharField(max_length=50)
-
-   def __str__(self):
-      return self.name
-
-
 class Neighbourhood(models.Model):
-  
-   name = models.CharField(max_length=50)
-   location = models.ForeignKey(Location, on_delete=models.CASCADE)
-   admin = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=30)
+    location = models.CharField(max_length=30)
+    logo = CloudinaryField('image', blank=True)
+    health_dept = models.IntegerField(null=True, blank=True)
+    police_dept = models.IntegerField(null=True, blank=True)
+    admin = models.IntegerField("neighbourhood admin", blank=False, default=1)
+    description = models.TextField(max_length=200, blank=True)
 
-   def __str__(self):
-      return self.name
+    def __str__(self):
+        return self.name
 
-   def create_neighbourhood(self):
-      return self.save()
+    def create_neighbourhd(self):
+        self.save()
 
-   def delete_neighbourhood(self):
-      return self.delete()
+    @classmethod
+    def delete_neighbourhd(cls, pk):
+        cls.objects.filter(pk=pk).delete()
 
-   @classmethod
-   def find_neighbourhood(cls,id):
-      hood = cls.objects.filter(pk=id).first()
-      return hood
-   
-   def update_neighbourhood(self):
-      return self.save()
+    @classmethod
+    def find_neighbourhd(cls, id):
+        search_results = cls.objects.filter(id=id)
+        return search_results
 
-   @classmethod
-   def update_occupants(cls,id):
-      hood = cls.objects.filter(pk=id).first()
-      occupants = hood.profile_set
-      return occupants
+    def update_neighbourhd(self, name):
+      self.name = name
+      self.save()
 
 class Profile(models.Model):
-    
-   user = models.OneToOneField(User, on_delete=models.CASCADE)
-   avatar = CloudinaryField('image')
-   neighbourhood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE, null=True)
-
-   def __str__(self):
-      return self.user.username
-
-class Category(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=60, blank=True)
+    bio = models.TextField(max_length=200, blank=True)
+    profile_photo = CloudinaryField('image')
+    neighbourhood = models.ForeignKey(Neighbourhood, on_delete=models.SET_NULL, null=True,blank=True)
    
-   name = models.CharField(max_length=50)
 
-   def __str__(self):
-      return self.name
-
-
+    def __str__(self):
+        return self.name
 
 class Business(models.Model):
+    name = models.CharField(max_length=60)
+    logo = CloudinaryField('image', blank=True)
+    description = models.TextField(max_length=200, blank=True)
+    neighbourhood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField()
 
-   name = models.CharField(max_length=50)
-   email = models.EmailField(max_length=254)
-   tel = models.IntegerField()
-   hood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
-   category = models.ForeignKey(Category, on_delete=models.CASCADE)
-   owner = models.ForeignKey(Profile,on_delete=models.CASCADE)
-
-   def __str__(self):
+    def __str__(self):
       return self.name
 
+    def create_busn(self):
+        self.save()
 
-class Post(models.Model):
-   
-   content = models.CharField(max_length=280)
-   author = models.ForeignKey(Profile, on_delete=models.CASCADE)
-   hood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
-   category = models.CharField(max_length=50,default='General')
+    @classmethod
+    def delete_busn(cls, pk):
+        cls.objects.filter(pk=pk).delete()
 
-   def __str__(self):
-      return self.content
-   
-class Amenities(models.Model):
-  
-   name = models.CharField(max_length=50)
-   tel = models.IntegerField()
-   email = models.EmailField(max_length=254)
-   amenity_type = models.CharField(max_length=50)
-   hood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
+    @classmethod
+    def find_busn(cls, id):
+        search_results = cls.objects.filter(id=id)
+        return search_results
 
-   def __str__(self):
+    def update_busn(self, name):
+      self.name = name
+      self.save()
+
+    @classmethod
+    def search_business(cls,search_term):
+        businesses = cls.objects.filter(name__icontains=search_term)
+        return businesses
+
+class Alerts(models.Model):
+    name = models.CharField(max_length=60)
+    content = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    neighbourhood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
+
+    def __str__(self):
       return self.name
-
-
-class Comment(models.Model):
-   
-   comment = models.CharField(max_length=50)
-   comment_on = models.ForeignKey(Post, on_delete=models.CASCADE)
-   comment_by = models.ForeignKey(Profile, on_delete=models.CASCADE)
-
-   def __str__(self):
-      return self.comment

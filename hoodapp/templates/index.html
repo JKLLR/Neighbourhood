@@ -1,100 +1,35 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load crispy_form_tags %}
+{% load i18n %}
 
 {% block content %}
 
-<div class="content">
 
-    <div class="updates">
-
-
-
-        <div class="add">
-            <h3>{{ user.profile.neighbourhood }}</h3>
-            <form action="" method="post">
-                {% csrf_token %}
-                {{ form | crispy }}
-                <button type="submit">Add Post</button>
-            </form>
-        </div>
-
-        <div class="hood-posts">
-
-            <h3>Updates</h3>
-            <div class="posts">
-                {% if posts %}
-
-
-                {% for post in posts %}
-
-                <div class="post-card">
-                    <p class="{{ txt_color }}">{{ post.category }}</p>
-                    <p class="post-content">{{ post.content }}</p>
-                    <div class="author">
-                        <div class="avatar-sm">
-                            <img src="{{ post.author.avatar.url }}" alt="">
-                        </div>
-                        <p>{{ post.author.user.first_name }} {{ post.author.user.last_name }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-
-                {% else %}
-                <h3 class='but'>There are no updates in this neighbourhood.</h3>
-                {% endif %}
-
-            </div>
-
-        </div>
-
+{% include "navbar.html" %}
+<!--flash messages-->
+{% if messages %}
+{% for message in messages %}
+<div class="container">
+    <div class="alert">
+        {{ message }}
     </div>
-
-
-
-    <div class="sidebar">
-
-        <div class="hood">
-            <div class="profile-card">
-                <div class="hood-image">
-                    <img src="{% static 'images/rainbow.jpg' %}" alt="">
-                </div>
-                <div class="bg-front"></div>
-                <div class="bg-back"></div>
-            </div>
-
-            <h3>{{ hood.name }}</h3>
-            <h5>{{ hood.location }}</h5>
-            <h5 class="title">Amenities</h5>
-            <div class="business">
-                {% for amenity in amenities %}
-                <h5>{{ amenity.name }}</h5>
-                <p>{{ amenity.category }}</p>
-                <div class="contacts">
-                    <p>{{ amenity.tel }}</p>
-                    <p>{{ amenity.email }}</p>
-                </div>
-                {% endfor %}
-                <a href="{% url 'new_amenity' %}">Add a Public Amenity</a>
-            </div>
-
-
-            <h5 class="title">Businesses</h5>
-            {% for business in businesses %}
-            <div class="business">
-                <h5>{{ business.name }}</h5>
-                <p>{{ business.category }}</p>
-                <div class="contacts">
-                    <p>{{ business.tel }}</p>
-                    <p>{{ business.email }}</p>
-                </div>
-            </div>
-            {% endfor %}
-            <a href="{% url 'new_business' %}">Add a Business</a>
-        </div>
-
+</div>
+{% endfor %}
+{% endif %}
+<div class="container-fluid">
+    <div class="row white" id="centered">
+        <h6>Get started now to help keep your neighbourhood safe and stay up to date on neighbourhood events</h6>
+        <div class="row"></div>
+        <button class="col s12 waves-effect waves-light btn white">
+            <a href="{% url 'neighbourhoods' %}" class="white-text">join a neighbourhood</a>
+        </button>
     </div>
-
+</div>
+<!--footer-->
+<div class="section center" style="color: black; position: fixed; bottom: 0%; width: 100%;">
+    <b>
+        <p>2022 nyumba-kumi</p>
+    </b>
 </div>
 
 {% endblock content %}

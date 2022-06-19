@@ -1,44 +1,19 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import *
-from .forms import AmenitiesForm, BusinessForm, NeighbourhoodForm, PostForm, ProfileUpdateForm
+from .forms import CreateAlertForm, CreateBusinessForm, CreateNeighbourhoodForm
+from django.views.generic import CreateView
 
 
 @login_required(login_url='/login/')
-def home(request):
-    hood = request.user.profile.neighbourhood
+def index(request):
+      return render(request,'index.html')
 
-    title = f'Feed | {hood}'
 
-    posts = Post.objects.filter(hood=hood)
-    businesses = Business.objects.filter(hood=hood)
-    amenities = Amenities.objects.filter(hood=hood)
-
-    if request.method == 'POST':
-      form = PostForm(request.POST)
-      if form.is_valid():
-         post = form.save(commit=False)
-         post.author = request.user.profile
-         post.hood = request.user.profile.neighbourhood
-         post.save()
-         return redirect('/')
-    else:
-      form = PostForm()
-
-    context = {
-      'title': title,
-      'posts': posts,
-      'businesses': businesses,
-      'amenities': amenities,
-      'form': form,
-      'hood': hood
-   }
-
-    return render(request, 'index.html', context)
 
 def signin(request):
     if request.method=="POST":
@@ -76,123 +51,90 @@ def register(request):
     return render(request,'registration/register.html')
 
 
-@login_required(login_url='/login/')
-def edit_profile(request):
+def search_results(request):
 
-   title = 'Edit Profile'
+    if 'business' in request.GET and request.GET["business"]:
+        search_term = request.GET.get("business")
+        searched_businesses = Business.search_business(search_term)
+        message = f"{search_term}"
 
-   user = request.user
+        return render(request, 'search.html',{"message":message,"businesses": searched_businesses})
 
-   if request.method == 'POST':
-      form = ProfileUpdateForm(request.POST,request.FILES,instance=user.profile)
-      if form.is_valid():
-         form.save()
-         return redirect('/')
-   else:
-      form = ProfileUpdateForm(instance=user.profile)
+    else:
+        message = "You haven't searched for any term"
+        return render(request, 'search.html',{"message":message})
 
-   context = {
-      'title': title,
-      'form': form
-   }
-
-   return render(request,'watch/edit_profile.html',context)
-
-
-# @login_required(login_url='/login/')
-# def hood_change(request):
-
-#    title = f'Change Neighbourhood'
-
-#    context = {
-#       'title': title
-#    }
-
-#    return render(request,'watch/hood_change.html',context)
+def create_neighbourhood(request):
+    if request.method == 'POST':
+        form = CreateNeighbourhoodForm(request.POST, request.FILES)
+        if form.is_valid():
+            neighbourhood = form.save(commit=False)
+            neighbourhood.admin = request.user.profile.pk
+            neighbourhood.save()
+            return redirect('neighbourhoods')
+    else:
+        form = CreateNeighbourhoodForm()
+    return render(request, 'neighbourhoods/create_neighbourhood.html', {'form':form})
 
 
-@login_required(login_url='/login/')
-def new_business(request):
+def join_neighbourhood(request,pk):
+    neighbourhood = get_object_or_404(Neighbourhood, id=pk)
+    user = request.user
+    user.profile.neighbourhood = neighbourhood
+    user.profile.save()
+    return redirect('neighbourhood_details', pk)
 
-   title = f'Add a New Business in {request.user.profile.neighbourhood}'
+def change_neighbourhood(request, pk):
+    neighbourhood = get_object_or_404(Neighbourhood, id=pk)
+    user = request.user
+    user.profile.neighbourhood = None
+    user.profile.save()
+    return redirect('neighbourhoods')
 
-   if request.method == 'POST':
-      form = BusinessForm(request.POST)
-      if form.is_valid():
-         business = form.save(commit=False)
-         business.owner = request.user.profile
-         business.hood = request.user.profile.neighbourhood
-         business.save()
-         return redirect('feed')
-   else:
-      form = BusinessForm()
+def neighbourhoods(request):
+    neighbourhoods = Neighbourhood.objects.all()
+    return render(request, 'neighbourhoods/neighbourhoods.html', {'neighbourhoods':neighbourhoods})
 
-   context =  {
-      'form': form,
-      'title': title
-   }
-
-   return render(request,'watch/new_business.html',context)
-
-def search(request):
-    
-   if 'biz_search' in request.GET and request.GET['biz_search']:
-      searched = request.GET.get('biz_search')
-      if searched:
-         businesses = Business.objects.filter(name__icontains=searched,hood=request.user.profile.neighbourhood)
-         title = f'You searched for {searched}'
-
-   context = {
+def neighbourhood_details(request,pk):
+    neighbourhood = Neighbourhood.objects.filter(id=pk)
+    businesses = Business.objects.filter(neighbourhood=pk)
+    alerts = Alerts.objects.filter(neighbourhood=pk)
+    if request.method == 'POST':
+        form = CreateAlertForm(request.POST)
+        
+        if form.is_valid():
+            alert = form.save(commit=False)
+            alert.owner = request.user.profile
+            alert.neighbourhood = request.user.profile.neighbourhood
+            alert.save()
+            return redirect('neighbourhood_details',pk)
+    else:
+        form = CreateAlertForm()
+    context ={
+      'neighbourhood':neighbourhood,
       'businesses': businesses,
-      'title': title,
-      'searched': searched
-   }
-
-   return render(request,'watch/search.html',context)
-
-@login_required(login_url='/login/')
-def new_hood(request):
-
-   title = "Add new neighbourhood"
-
-   if request.method == 'POST':
-      form = NeighbourhoodForm(request.POST)
-      if form.is_valid():
-         hood = form.save(commit=False)
-         hood.admin = request.user
-         hood.save()
-         profile = request.user.profile
-         profile.neighbourhood = hood
-         profile.save()
-         return redirect('feed')
-   else:
-      form = NeighbourhoodForm()
-
-   context = {
-      'title': title,
-      'form': form
-   }
-
-   return render(request,'watch/new_hood.html',context)
-
-@login_required(login_url='/login/')
-def new_amenity(request):
-
-   title = f'Add a New Amenity in {request.user.profile.neighbourhood}'
-
-   if request.method == 'POST':
-      form = AmenitiesForm(request.POST)
-      if form.is_valid():
-         amenity = form.save(commit=False)
-         amenity.hood = request.user.profile.neighbourhood
-         amenity.save()
-         return redirect('feed')
-   else:
-      form = AmenitiesForm()
-
-   context =  {
+      'alerts': alerts,
       'form': form,
-      'title': title
-   }
+    }
+    return render(request, 'neighbourhoods/neighbourhood_details.html', context)
+  
+def create_business(request, pk):
+    if request.method == 'POST':
+        b_form = CreateBusinessForm(request.POST, request.FILES)
+        if b_form.is_valid:
+            business = b_form.save(commit=False)
+            business.owner = request.user
+            business.neighbourhood = request.user.profile.neighbourhood
+            b_form.save()
 
-   return render(request,'watch/new_amenity.html',context)
+            messages.success(request, f'Your business has been created successfully')
+            return redirect('neighbourhood_details',pk)
+
+    else:
+        b_form = CreateBusinessForm(instance=request.user)
+        
+
+    context = {
+      'b_form':b_form,
+    }
+    return render(request,'business/create_business.html', context)
