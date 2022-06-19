@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Business, Neighbourhood, Post, Profile
+from .models import Amenities, Business, Comment, Neighbourhood, Post, Profile
 
 class ProfileUpdateForm(forms.ModelForm):
     
@@ -36,3 +36,24 @@ class PostForm(forms.ModelForm):
    class Meta:
       model = Post
       fields = ['content','category']
+
+class AmenitiesForm(forms.ModelForm):
+       
+   CATEGORIES = (
+      ('', 'Select a Category'),
+      ('Hospital','Hospital'),
+      ('Police','Police'),
+      ('Park','Park'),
+      ('School','School'),
+      ('Fire Department', 'Fire Department')
+   )
+   amenity_type = forms.ChoiceField(choices=CATEGORIES,widget=forms.Select())
+   class Meta:
+      model = Amenities
+      fields = ['name','tel','email','amenity_type']
+
+class CommentForm(forms.ModelForm):
+
+   class Meta:
+      model = Comment
+      fields = ['comment']

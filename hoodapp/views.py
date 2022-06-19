@@ -76,7 +76,7 @@ def register(request):
     return render(request,'registration/register.html')
 
 
-@login_required(login_url='register')
+@login_required(login_url='/login/')
 def edit_profile(request):
 
    title = 'Edit Profile'
@@ -99,19 +99,19 @@ def edit_profile(request):
    return render(request,'watch/edit_profile.html',context)
 
 
-@login_required(login_url='register')
-def hood_change(request):
+# @login_required(login_url='/login/')
+# def hood_change(request):
 
-   title = f'Change Neighbourhood'
+#    title = f'Change Neighbourhood'
 
-   context = {
-      'title': title
-   }
+#    context = {
+#       'title': title
+#    }
 
-   return render(request,'dash/hood_change.html',context)
+#    return render(request,'watch/hood_change.html',context)
 
 
-@login_required(login_url='register')
+@login_required(login_url='/login/')
 def new_business(request):
 
    title = f'Add a New Business in {request.user.profile.neighbourhood}'
