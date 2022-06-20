@@ -31,13 +31,11 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="{% url 'index' %} " style="color: white;">Hoods</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
-    aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
-  <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+  <div class="collapse navbar-collapse" id="navbarScroll">
+    <ul class="navbar-nav mr-auto my-2 my-lg-0 navbar-nav-scroll" style="max-height: 100px;">
       {% if user.is_authenticated %}
       <li class="nav-item active">
         <a class="nav-link" href="{% url 'new_neighbourhood' %}" style="color: white;">create neighbourhood <span
@@ -48,8 +46,15 @@
         <a class="nav-link" style="color: white;" href="{% url 'neighbourhood_details' request.user.profile.neighbourhood.pk %}">View hood</a>
       </li>
       {% endif %}
-      <li class="nav-item">                                         
-        <a class="nav-link active" style="color: white;" href="{% url 'edit-profile' user.username %}">profile</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-toggle="dropdown" aria-expanded="false" style="color: white;">
+          Profile
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+          <li><a class="nav-link active"  href="{% url 'edit-profile' user.username %}">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="nav-link active"  href="{% url 'edit-profile' user.username %}">Edit Profile</a></li>
+        </ul>
       </li>
       <li class="nav-item">
         <a class="nav-link active" style="color: white;" href="{% url 'signout' %}">signout</a>

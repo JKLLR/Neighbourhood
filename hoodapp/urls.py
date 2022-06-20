@@ -12,6 +12,7 @@ urlpatterns=[
     path('change_neighbourhood/<int:pk>', views.change_neighbourhood, name='change_neighbourhood'),
     path('neighbourhood/<int:pk>', views.neighbourhood_details, name='neighbourhood_details'),
     path('new_business/<int:pk>', views.create_business, name='create_business'),
+    path('profile/<username>', views.profile, name='profile'),
     path('profile/<username>/edit/', views.edit_profile, name='edit-profile'),
     path('signout/',views.signout,name='signout'),
 ]

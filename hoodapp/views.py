@@ -160,6 +160,9 @@ def create_business(request, pk):
 #     }
 #     return render(request,'profile.html', context)
 
+def profile(request, username):
+    return render(request, 'profile.html')
+
 def edit_profile(request, username):
     user = User.objects.get(username=username)
     if request.method == 'POST':
@@ -169,7 +172,7 @@ def edit_profile(request, username):
             return redirect('profile', user.username)
     else:
         p_form = ProfileUpdateForm(instance=request.user.profile)
-    return render(request, 'profile.html', {'p_form':p_form})
+    return render(request, 'edit_profile.html', {'p_form':p_form})
 
 def signout(request):
     logout(request)
