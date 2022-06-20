@@ -26,26 +26,14 @@ class BusinessUpdateForm(forms.ModelForm):
         model = Business
         exclude = ['owner', 'neighbourhood']
 
-class UserRegistrationForm(UserCreationForm):
-    '''
-    Form that inherits from the django UserCreationForm and adds email field 
-    '''
-    email = forms.EmailField()
 
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
+# class UserUpdateForm(forms.ModelForm):
+   
+#     email = forms.EmailField()
 
-
-class UserUpdateForm(forms.ModelForm):
-    '''
-    Update username and email
-    '''
-    email = forms.EmailField()
-
-    class Meta:
-        model = User
-        fields = ['username', 'email']
+#     class Meta:
+#         model = User
+#         fields = ['username', 'email']
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:

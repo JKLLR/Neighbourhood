@@ -48,8 +48,8 @@
         <a class="nav-link" style="color: white;" href="{% url 'neighbourhood_details' request.user.profile.neighbourhood.pk %}">View hood</a>
       </li>
       {% endif %}
-      <li class="nav-item">
-        <a class="nav-link active" style="color: white;" href="{% url 'profile' %}">profile</a>
+      <li class="nav-item">                                         
+        <a class="nav-link active" style="color: white;" href="{% url 'edit-profile' user.username %}">profile</a>
       </li>
       <li class="nav-item">
         <a class="nav-link active" style="color: white;" href="{% url 'signout' %}">signout</a>

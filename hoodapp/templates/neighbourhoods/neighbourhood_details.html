@@ -23,7 +23,7 @@
       </form>
       <div class="row center-align">
         <p>Moving out?</p>
-        <button class="btn"><a href="{% url 'change_neighbourhood' neighbourhood.pk %}" class="white-text">Change
+        <button class="btn"><a href="{% url 'change_neighbourhood' neighbourhood.pk %}" class="white-text" style="color: white;">Change
             Neighbourhood</a></button>
       </div>
     </div>
@@ -62,10 +62,10 @@
   <div class="container" style="padding-top: 20px;">
     <div class="row center-align">
       <button class="cols12 btn">
-        <a href="{% url 'create_business' neighbourhood.pk %}" class="white-text">Create business</a>
+        <a href="{% url 'create_business' neighbourhood.pk %}" class="white-text" style="color: white;">Create business</a>
       </button>
       <!-- Modal Trigger -->
-      <button data-target="modal1{{neighbourhood.id}}" class="btn modal-trigger cols12">Create Post</button>
+      <button data-target="modal1{{neighbourhood.id}}" class="btn modal-trigger cols12" style="color: white;">Create Post</button>
     </div>
     <!-- Modal Structure -->
     <div id="modal1{{neighbourhood.id}}" class="modal">

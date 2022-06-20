@@ -5,14 +5,13 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import *
-from .forms import CreateAlertForm, CreateBusinessForm, CreateNeighbourhoodForm, ProfileUpdateForm, UserUpdateForm
+from .forms import CreateAlertForm, CreateBusinessForm, CreateNeighbourhoodForm, ProfileUpdateForm
 from django.views.generic import CreateView
 
 
 @login_required(login_url='/login/')
 def index(request):
       return render(request,'index.html')
-
 
 
 def signin(request):
@@ -140,27 +139,37 @@ def create_business(request, pk):
     return render(request,'business/create_business.html', context)
 
     
-@login_required()
-def profile(request):
+# def profile(request):
+#     if request.method == 'POST':
+#         u_form = UserUpdateForm(request.POST, instance=request.user)
+#         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+#         if u_form.is_valid and p_form.is_valid:
+#             u_form.save()
+#             p_form.save()
+
+#             messages.success(request, f'Your hood account had been updated successfully')
+#             return redirect('profile')
+
+#     else:
+#         u_form = UserUpdateForm(instance=request.user)
+#         p_form = ProfileUpdateForm(instance=request.user.profile)
+
+#     context = {
+#       'u_form':u_form,
+#       'p_form': p_form,
+#     }
+#     return render(request,'profile.html', context)
+
+def edit_profile(request, username):
+    user = User.objects.get(username=username)
     if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if u_form.is_valid and p_form.is_valid:
-            u_form.save()
+        if p_form.is_valid():
             p_form.save()
-
-            messages.success(request, f'Your hood account had been updated successfully')
-            return redirect('profile')
-
+            return redirect('profile', user.username)
     else:
-        u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
-
-    context = {
-      'u_form':u_form,
-      'p_form': p_form,
-    }
-    return render(request,'profile.html', context)
+    return render(request, 'profile.html', {'p_form':p_form})
 
 def signout(request):
     logout(request)
