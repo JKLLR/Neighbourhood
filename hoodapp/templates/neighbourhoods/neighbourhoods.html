@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{%load static%}
 {% block content %}
+
 
 <!--display messages-->
 {% if messages %}
@@ -21,23 +23,22 @@
   <div class="row center-align">
 
     {% for neighbourhood in neighbourhoods %}
+
     <div class="col s12 m4 l3" style="padding: 0px;">
-      <div class="card-panel hoverable" id="card">
+      <div class="card" style="width: 18rem;">
         <div class="card-image">
           {% if neighbourhood.logo %}
-          <img src="{{neighbourhood.logo.url}}" alt="" class=" responsive-img">
+          <img src="{{neighbourhood.logo.url}}" alt="" class="card-img-top">
           {% else %}
-          <img src="/photos/neighbourhood.jpg" alt="" class=" responsive-img">
+          <img src="/static/photos/neighbourhood.jpg" alt="" class="card-img-top">
           {% endif %}
         </div>
-        <div class="card-content" style="display: flex; justify-content: space-between;">
-          <p style="padding-right: 10px;"><b>Name: </b>{{neighbourhood.name}}</p>
-          <p style="padding-right: 10px;"><b>Location: </b>{{neighbourhood.location}}</p>
-        </div>
-        <div class="card-action">
-          <button class="btn">
-            <a href="{% url 'join_neighbourhood' neighbourhood.pk %}" class="white-text">Join Neighbourhood</a>
-          </button>
+        <div class="card-body">
+          <h5 class="card-title">Hood</h5>
+          <p class="card-text">{{neighbourhood.name}}</p>
+          <h5 class="card-title">Location</h5>
+          <p class="card-text">{{neighbourhood.location}}</p>
+          <a href="{% url 'join_neighbourhood' neighbourhood.pk %}" class="btn btn-primary">Join Neighbourhood</a>
         </div>
       </div>
 
@@ -46,9 +47,6 @@
   </div>
 
 </div>
-<!--footer-->
-<div class="section center" style="color: grey; position: fixed; bottom: 0%; width: 100%;">
-  <p>2022 Hoods</p>
-</div>
+
 
 {% endblock %}
