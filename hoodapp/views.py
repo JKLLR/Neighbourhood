@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import *
-from .forms import CreateAlertForm, CreateBusinessForm, CreateNeighbourhoodForm
+from .forms import CreateAlertForm, CreateBusinessForm, CreateNeighbourhoodForm, ProfileUpdateForm, UserUpdateForm
 from django.views.generic import CreateView
 
 
@@ -24,7 +24,7 @@ def signin(request):
         if user is not None:
             login(request,user)
             messages.success(request,"You have successfuly loged in")
-            return redirect ('edit_profile')
+            return redirect ('/')
     return render(request,'registration/login.html')
 
 def register(request):
@@ -138,3 +138,31 @@ def create_business(request, pk):
       'b_form':b_form,
     }
     return render(request,'business/create_business.html', context)
+
+    
+@login_required()
+def profile(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if u_form.is_valid and p_form.is_valid:
+            u_form.save()
+            p_form.save()
+
+            messages.success(request, f'Your nyumba kumi account had been updated successfully')
+            return redirect('profile')
+
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+
+    context = {
+      'u_form':u_form,
+      'p_form': p_form,
+    }
+    return render(request,'users/profile.html', context)
+
+def signout(request):
+    logout(request)
+    messages.success(request,"You have logged out, we will be glad to have you back again")
+    return redirect ("login")

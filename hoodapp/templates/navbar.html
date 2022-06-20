@@ -1,7 +1,7 @@
 <div class="navbar-fixed">
   <nav >
     <div class="nav-wrapper" style="padding-bottom: 0;">
-      <a href="{% url 'index' %}" class="brand-logo left white-text">nyumbakumi</a>
+      <a href="{% url 'index' %}" class="brand-logo left white-text">Hoods</a>
       <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
         <li>
@@ -20,7 +20,7 @@
           <li> <a href="{% url 'neighbourhood_details' request.user.profile.neighbourhood.pk %}" class="white-text"><i class="material-icons white-text">business</i>View hood</a></li>
           {% endif %}
           <li><a href="{% url 'profile' %}"><i class="material-icons white-text">account_circle</i></a></li>
-          <li><a href="{% url 'logout' %}"><i class="material-icons white-text">exit_to_app</i></a></li>
+          <li><a href="{% url 'signout' %}"><i class="material-icons white-text">exit_to_app</i></a></li>
           
         {% else %}
           <li><a href="{% url 'login' %}" class="white-text">login</a></li>
@@ -39,7 +39,7 @@
         <li> <a href="{% url 'neighbourhood_details' request.user.profile.neighbourhood.pk %}" class="white-text"><i class="material-icons white-text">business</i>View hood</a></li>
         {% endif %}
         <li><a href="{% url 'profile' %}" class="white-text"><i class="material-icons white-text">account_circle</i>view profile</a></li>
-        <li><a href="{% url 'logout' %}" class="white-text"><i class="material-icons white-text">exit_to_app</i>log out</a></li>
+        <li><a href="{% url 'signout' %}" class="white-text"><i class="material-icons white-text">exit_to_app</i>log out</a></li>
         
       {% else %}
         <li><a href="{% url 'login' %}" class="white-text">login</a></li>
