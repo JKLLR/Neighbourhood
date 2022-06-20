@@ -1,6 +1,4 @@
 {% extends 'base.html' %}
-{% load bootstrap4 %}
-
 {% block content %}
 
 <!--display messages-->
@@ -29,7 +27,7 @@
           {% if neighbourhood.logo %}
           <img src="{{neighbourhood.logo.url}}" alt="" class=" responsive-img">
           {% else %}
-          <img src="/static/photos/neighbourhood.jpg" alt="" class=" responsive-img">
+          <img src="/photos/neighbourhood.jpg" alt="" class=" responsive-img">
           {% endif %}
         </div>
         <div class="card-content" style="display: flex; justify-content: space-between;">

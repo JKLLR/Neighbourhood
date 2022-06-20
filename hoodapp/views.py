@@ -138,27 +138,26 @@ def create_business(request, pk):
     }
     return render(request,'business/create_business.html', context)
 
-    
-# def profile(request):
-#     if request.method == 'POST':
-#         u_form = UserUpdateForm(request.POST, instance=request.user)
-#         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-#         if u_form.is_valid and p_form.is_valid:
-#             u_form.save()
-#             p_form.save()
+def create_post(request, pk):
+    if request.method == 'POST':
+        form = CreateAlertForm(request.POST, request.FILES)
+        if form.is_valid:
+            post = form.save(commit=False)
+            post.neighbourhood = request.user.profile.neighbourhood
+            post.user = request.user.profile
+            form.save()
+            messages.success(request, f'Your post has been created successfully')
+            return redirect('neighbourhood_details',pk)
 
-#             messages.success(request, f'Your hood account had been updated successfully')
-#             return redirect('profile')
+    else:
+        form = CreateAlertForm(instance=request.user)
+        
 
-#     else:
-#         u_form = UserUpdateForm(instance=request.user)
-#         p_form = ProfileUpdateForm(instance=request.user.profile)
+    context = {
+      'form':form,
+    }
+    return render(request,'business/create_post.html', context)
 
-#     context = {
-#       'u_form':u_form,
-#       'p_form': p_form,
-#     }
-#     return render(request,'profile.html', context)
 
 def profile(request, username):
     return render(request, 'profile.html')
@@ -169,10 +168,11 @@ def edit_profile(request, username):
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
         if p_form.is_valid():
             p_form.save()
-            return redirect('profile', user.username)
+            return redirect('edit_profile', user.username)
     else:
         p_form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'edit_profile.html', {'p_form':p_form})
+
 
 def signout(request):
     logout(request)
