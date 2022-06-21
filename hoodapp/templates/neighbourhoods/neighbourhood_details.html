@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{%load static%}
 {% block content %}
 <!--display messages-->
 
@@ -33,12 +34,9 @@
   <!--neighbourhood profile-->
   <div class="row center-align" style="display: flex;">
     <div class="card-image" style="height: 350px; width: 350px; padding: 20px;">
-      {% if neighbourhood.logo %}
       <img src="{{neighbourhood.logo.url}}" alt="" class="responsive-img"
         style="height: 100%; width: 100%; object-fit: cover;">
-      {% else %}
-      <img src="/static/photos/neighbourhood.jpg" alt="" class="responsive-img">
-      {% endif %}
+      
     </div>
     <div>
       <div class="row center-align" style="display: flex;">
@@ -79,7 +77,7 @@
       <div class="col s12 m4 l3" style="padding: 0px;">
         <div class="card-panel hoverable" id="card">
           <div class="card-content">
-            <p style="padding-right: 10px;"><b>Name: </b>{{alert.name}}</p>
+            <p style="padding-right: 10px;"><b>Name: </b>{{alert.owner}}</p>
           </div>
           <div class="card-action">
             <p style="padding-right: 10px;">{{alert.content}}</p>

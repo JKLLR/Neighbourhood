@@ -5,33 +5,55 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
+# class Neighbourhood(models.Model):
+#     name = models.CharField(max_length=30)
+#     location = models.CharField(max_length=30)
+#     logo = CloudinaryField('image')
+#     health_dept = models.IntegerField(null=True, blank=True)
+#     police_dept = models.IntegerField(null=True, blank=True)
+#     admin = models.IntegerField("neighbourhood admin", blank=False, default=1)
+#     description = models.TextField(max_length=200, blank=True)
+
+#     def __str__(self):
+#         return self.name
+
+#     def create_neighbourhd(self):
+#         self.save()
+
+#     @classmethod
+#     def delete_neighbourhd(cls, pk):
+#         cls.objects.filter(pk=pk).delete()
+
+#     @classmethod
+#     def find_neighbourhd(cls, id):
+#         search_results = cls.objects.filter(id=id)
+#         return search_results
+
+#     def update_neighbourhd(self, name):
+#       self.name = name
+#       self.save()
+
 class Neighbourhood(models.Model):
-    name = models.CharField(max_length=30)
-    location = models.CharField(max_length=30)
-    logo = CloudinaryField('image', blank=True)
+    name = models.CharField(max_length=50)
+    location = models.CharField(max_length=60)
+    admin = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name='hood')
+    logo =CloudinaryField('images')
+    description = models.TextField()
     health_dept = models.IntegerField(null=True, blank=True)
     police_dept = models.IntegerField(null=True, blank=True)
-    admin = models.IntegerField("neighbourhood admin", blank=False, default=1)
-    description = models.TextField(max_length=200, blank=True)
-
+    
     def __str__(self):
-        return self.name
+        return f'{self.name} hood'
 
-    def create_neighbourhd(self):
+    def create_neighborhood(self):
         self.save()
 
-    @classmethod
-    def delete_neighbourhd(cls, pk):
-        cls.objects.filter(pk=pk).delete()
+    def delete_neighborhood(self):
+        self.delete()
 
     @classmethod
-    def find_neighbourhd(cls, id):
-        search_results = cls.objects.filter(id=id)
-        return search_results
-
-    def update_neighbourhd(self, name):
-      self.name = name
-      self.save()
+    def find_neighborhood(cls, neighborhood_id):
+        return cls.objects.filter(id=neighborhood_id)
 
 # class Profile(models.Model):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -96,12 +118,19 @@ class Business(models.Model):
         businesses = cls.objects.filter(name__icontains=search_term)
         return businesses
 
+# class Alerts(models.Model):
+#     name = models.CharField(max_length=60)
+#     content = models.TextField()
+#     date_posted = models.DateTimeField(auto_now_add=True)
+#     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+#     neighbourhood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
+
+#     def __str__(self):
+#       return self.name
+
 class Alerts(models.Model):
-    name = models.CharField(max_length=60)
+    name = models.CharField(max_length=120)
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    neighbourhood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE)
-
-    def __str__(self):
-      return self.name
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='post_owner')
+    neighbourhood = models.ForeignKey(Neighbourhood, on_delete=models.CASCADE, related_name='hood_post')

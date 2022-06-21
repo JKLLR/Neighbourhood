@@ -8,13 +8,13 @@ class CreateNeighbourhoodForm(forms.ModelForm):
 
     class Meta:
         model = Neighbourhood
-        exclude = ['admin']
+        exclude = ['admin',]
 
 class CreateAlertForm(forms.ModelForm):
 
     class Meta:
         model = Alerts
-        fields = ['name', 'content']
+        fields = ['owner', 'content']
 
 class CreateBusinessForm(forms.ModelForm):
     class Meta:

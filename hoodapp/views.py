@@ -9,7 +9,7 @@ from .forms import CreateAlertForm, CreateBusinessForm, CreateNeighbourhoodForm,
 from django.views.generic import CreateView
 
 
-@login_required(login_url='/login/')
+@login_required(login_url='/login/')   
 def index(request):
       return render(request,'index.html')
 
@@ -68,7 +68,7 @@ def create_neighbourhood(request):
         form = CreateNeighbourhoodForm(request.POST, request.FILES)
         if form.is_valid():
             neighbourhood = form.save(commit=False)
-            neighbourhood.admin = request.user.profile.pk
+            neighbourhood.admin = request.user.profile
             neighbourhood.save()
             return redirect('neighbourhoods')
     else:
@@ -90,9 +90,16 @@ def change_neighbourhood(request, pk):
     user.profile.save()
     return redirect('neighbourhoods')
 
+# def neighbourhoods(request):
+#     neighbourhoods = Neighbourhood.objects.all()
+#     return render(request, 'neighbourhoods/neighbourhoods.html', {'neighbourhoods':neighbourhoods})
+
 def neighbourhoods(request):
     neighbourhoods = Neighbourhood.objects.all()
-    return render(request, 'neighbourhoods/neighbourhoods.html', {'neighbourhoods':neighbourhoods})
+    params = {
+        'neighbourhoods': neighbourhoods,
+    }
+    return render(request, 'neighbourhoods/neighbourhoods.html', params)
 
 def neighbourhood_details(request,pk):
     neighbourhood = Neighbourhood.objects.filter(id=pk)
@@ -138,25 +145,39 @@ def create_business(request, pk):
     }
     return render(request,'business/create_business.html', context)
 
-def create_post(request, pk):
-    if request.method == 'POST':
-        form = CreateAlertForm(request.POST, request.FILES)
-        if form.is_valid:
-            post = form.save(commit=False)
-            post.neighbourhood = request.user.profile.neighbourhood
-            post.user = request.user.profile
-            form.save()
-            messages.success(request, f'Your post has been created successfully')
-            return redirect('neighbourhood_details',pk)
+# def create_post(request, pk):
+#     if request.method == 'POST':
+#         form = CreateAlertForm(request.POST, request.FILES)
+#         if form.is_valid:
+#             post = form.save(commit=False)
+#             post.neighbourhood = request.user.profile.neighbourhood
+#             post.user = request.user.profile
+#             form.save()
+#             messages.success(request, f'Your post has been created successfully')
+#             return redirect('neighbourhood_details',pk)
 
-    else:
-        form = CreateAlertForm(instance=request.user)
+#     else:
+#         form = CreateAlertForm(instance=request.user)
         
 
-    context = {
-      'form':form,
-    }
-    return render(request,'business/create_post.html', context)
+#     context = {
+#       'form':form,
+#     }
+#     return render(request,'business/create_post.html', context)
+
+def create_post(request, pk):
+    hood = Neighbourhood.objects.get(id=pk)
+    if request.method == 'POST':
+        form = CreateAlertForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.hood = hood
+            post.user = request.user.profile
+            post.save()
+            return redirect('neighbourhood_details',pk)
+    else:
+        form = CreateAlertForm()
+    return render(request, 'business/create_post.html', {'form': form})
 
 
 def profile(request, username):
